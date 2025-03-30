@@ -12,6 +12,6 @@
   :deploy {:extra-deps {slipset/deps-deploy {:mvn/version "RELEASE"}}
            :exec-fn deps-deploy.deps-deploy/deploy
            :exec-args {:installer :remote
-                       :pom-file "target/classes/META-INF/maven/com.github.ilmoraunio/conjtest/pom.xml"
+                       :pom-file "target/classes/META-INF/maven/org.conjtest/conjtest-clj/pom.xml"
                        :sign-releases? false
-                       :artifact "target/conjtest.jar"}}}}
+                       :artifact "target/conjtest-clj.jar"}}}}

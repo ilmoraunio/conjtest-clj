@@ -6,7 +6,7 @@
 (def build-folder "target")
 (def jar-content (str build-folder "/classes"))     ; folder where we collect files to pack in a jar
 
-(def lib-name 'com.github.ilmoraunio/conjtest)
+(def lib-name 'org.conjtest/conjtest-clj)
 (def version (-> (slurp "resources/CONJTEST_LIB_VERSION")
                  str/trim))
 (def is-release (Boolean/parseBoolean (System/getenv "RELEASE")))
