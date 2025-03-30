@@ -30,8 +30,8 @@
                              (str version "-SNAPSHOT"))
                 :basis     basis
                 :src-dirs  ["src"]
-                :scm {:url "https://github.com/ilmoraunio/conjtest"
-                      :connection "scm:git:git://github.com/ilmoraunio/conjtest.git"
+                :scm {:url "https://github.com/ilmoraunio/conjtest-clj"
+                      :connection "scm:git:git://github.com/ilmoraunio/conjtest-clj.git"
                       :tag (if is-release
                              version
                              (b/git-process {:git-args "rev-parse HEAD"}))}
