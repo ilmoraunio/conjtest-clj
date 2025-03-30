@@ -19,6 +19,8 @@ jobs:
       uses: DeLaGuardo/setup-clojure@master
       with:
         cli: latest
+    - name: clj tests
+      run: ./scripts/kaocha
     - name: Build jar
       run: clojure -T:build jar
     - name: Archive jar
