@@ -508,7 +508,40 @@
            (-> (conjtest/test [(first (vals valid-yaml))
                                (first (vals invalid-yaml))]
                               #'conjtest.example-deny-rules/deny-my-rule)
-               (select-keys [:summary :result])))))
+               (select-keys [:summary :result]))))
+    (is (= {:summary {:total 2, :passed 0, :warnings 0, :failures 2},
+            :failure-report "FAIL - null - deny-will-trigger-always - :conjtest/rule-validation-failed
+FAIL - null - allow-will-trigger-always - :conjtest/rule-validation-failed
+
+2 tests, 0 passed, 0 warnings, 2 failures
+",
+            :result [{:message :conjtest/rule-validation-failed,
+                      :name "deny-will-trigger-always",
+                      :rule-type :deny,
+                      :failure? true}
+                     {:message :conjtest/rule-validation-failed,
+                      :name "allow-will-trigger-always",
+                      :rule-type :allow,
+                      :failure? true}]}
+           (conjtest/test
+             [(second (first valid-yaml))]
+             ^{:rule/name "deny-will-trigger-always"}
+             (fn [_] true)
+             ^{:rule/name "allow-will-trigger-always"
+               :rule/type :allow}
+             (fn [_] false))))
+    (is (= {:summary {:total 2, :passed 2, :warnings 0, :failures 0},
+            :summary-report "2 tests, 2 passed, 0 warnings, 0 failures\n",
+            :result [{:message nil, :name "deny-will-never-trigger", :rule-type :deny, :failure? false}
+                     {:message nil, :name "allow-will-never-trigger", :rule-type :allow, :failure? false}]}
+           (conjtest/test
+             [(second (first valid-yaml))]
+             ^{:rule/name "deny-will-never-trigger"
+               :rule/type :deny}
+             (fn [_] false)
+             ^{:rule/name "allow-will-never-trigger"
+               :rule/type :allow}
+             (fn [_] true)))))
   (testing "trace report is shown when trace flag is given"
     (testing "single rule traced"
       (testing "when rule is triggered"

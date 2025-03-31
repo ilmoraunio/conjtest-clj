@@ -122,7 +122,7 @@
 (defn -format-message
   ([filename rule-type name message]
    (cond
-     (and filename rule-type name message)
+     (and rule-type name message)
      (format "%s - %s - %s - %s"
              (case rule-type
                (:allow :deny) "FAIL"
@@ -130,7 +130,7 @@
              filename
              name
              message)
-     (and filename rule-type message)
+     (and rule-type message)
      (format "%s - %s - %s"
              (case rule-type
                (:allow :deny) "FAIL"
@@ -197,12 +197,18 @@
 
 (defn -failure-report
   [result {:keys [trace] :as opts}]
-  (let [failures-text (->> result
-                           (mapcat (fn [[filename results]]
-                                     (keep (fn [{:keys [failure?] :as rule-eval}]
-                                             (when failure?
-                                               (-format-message filename rule-eval)))
-                                           results)))
+  (let [failures-text (->> (cond
+                             (map? result) (mapcat
+                                             (fn [[filename results]]
+                                               (keep (fn [{:keys [failure?] :as rule-eval}]
+                                                       (when failure?
+                                                         (-format-message filename rule-eval)))
+                                                     results))
+                                             result)
+                             (coll? result) (keep (fn [{:keys [failure?] :as rule-eval}]
+                                                    (when failure?
+                                                      (-format-message nil rule-eval)))
+                                                  result))
                            (string/join "\n")
                            (format "%s\n"))
         summary-report (-summary-report result opts)]
@@ -222,11 +228,12 @@
 (defn any-failures?
   [result opts]
   (boolean (not-empty
-             (mapcat
-               (cond
-                 (map? result) (fn [[_filename evaluations]] (filter-results evaluations opts))
-                 (coll? result) (fn [evaluations] (filter-results evaluations opts)))
-               result))))
+            (cond
+              (map? result)
+              (mapcat (fn [[_filename evaluations]] (filter-results evaluations opts)) result)
+
+              (coll? result)
+              (filter-results result opts)))))
 
 (defn test-with-opts
   ([inputs rules]
