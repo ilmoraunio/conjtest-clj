@@ -4,13 +4,13 @@
             [clojure.string :as string]
             [clojure.string]))
 
-(defn string-or-nil
+(defn message-or-nil
   [x]
   (when (string? x) x))
 
-(defn coll-or-nil
+(defn messages-or-nil
   [x]
-  (when (coll? x) x))
+  (when (and (coll? x) (every? string? x)) x))
 
 (defn rule-type
   [rule]
@@ -71,15 +71,18 @@
                                           :allow (or (not result)
                                                      (string? result)
                                                      (and (coll? result)
-                                                          (not-empty result)))
+                                                          (not-empty result)
+                                                          (every? string? result)))
                                           (:warn :deny) (when result
-                                                          (if (coll? result)
-                                                            (not-empty result)
-                                                            true))))]
+                                                          (if (and (coll? result)
+                                                                   (not-empty result)
+                                                                   (every? string? result))
+                                                            true
+                                                            result))))]
                    (cond
                      (map? inputs) [(first input) [(cond-> {:message (when (true? failure)
-                                                                       (or (string-or-nil result)
-                                                                           (coll-or-nil result)
+                                                                       (or (message-or-nil result)
+                                                                           (messages-or-nil result)
                                                                            (rule-message rule)
                                                                            :conjtest/rule-validation-failed))
                                                             :name rule-name
@@ -89,8 +92,8 @@
                                                                   :rule rule
                                                                   :rule-target rule-target))]]
                      (vector? inputs) (cond-> {:message (when (true? failure)
-                                                          (or (string-or-nil result)
-                                                              (coll-or-nil result)
+                                                          (or (message-or-nil result)
+                                                              (messages-or-nil result)
                                                               (rule-message rule)
                                                               :conjtest/rule-validation-failed))
                                                :name rule-name
