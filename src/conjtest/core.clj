@@ -239,6 +239,16 @@
                (-filter-results result opts)))))
 
 (defn test-with-opts
+  "Validate `rules` against all given `inputs`. If all rules validate correctly, returns summary report. If any rules
+   do not validate correctly, will return failure report.
+
+  `inputs` either accepts a map of filenames-to-data or a vec of data. Data can be any data structure.
+
+  `rules` either accepts a vector of functions, vars, or namespaces.
+
+  `opts` optionally accepts a map of options with support for following configuration:
+  - `:fail-on-warn`, returns failure report if warn policies fail
+  - `:trace`, returns trace report"
   ([inputs rules]
    (test-with-opts inputs rules nil))
   ([inputs rules opts]
@@ -254,6 +264,16 @@
        (-summary-report result opts)))))
 
 (defn test-with-opts!
+  "Validate `rules` against all given `inputs`. If all rules validate correctly, returns summary report. If any rules
+   do not validate correctly, function will throw.
+
+  `inputs` either accepts a map of filenames-to-data or a vec of data. Data can be any data structure.
+
+  `rules` either accepts a vector of functions, vars, or namespaces.
+
+  `opts` optionally accepts a map of options with support for following configuration:
+  - `:fail-on-warn`, throws if warn policies fail
+  - `:trace`, returns trace report, prints trace report if function throws"
   ([inputs rules]
    (test-with-opts! inputs rules nil))
   ([inputs rules opts]
@@ -265,9 +285,21 @@
        (some? summary-report) report))))
 
 (defn test
+  "Validate `rules` against all given `inputs`. If all rules validate correctly, returns summary report. If any rules
+   do not validate correctly, will return failure report.
+
+  `inputs` either accepts a map of filenames-to-data or a vec of data. Data can be any data structure.
+
+  `rules` either accepts functions, vars, or namespaces."
   [inputs & rules]
   (test-with-opts inputs rules))
 
 (defn test!
+  "Validate `rules` against all given `inputs`. If all rules validate correctly, returns summary report. If any rules
+   do not validate correctly, function will throw.
+
+  `inputs` either accepts a map of filenames-to-data or a vec of data. Data can be any data structure.
+
+  `rules` either accepts functions, vars, or namespaces."
   [inputs & rules]
   (test-with-opts! inputs rules))
