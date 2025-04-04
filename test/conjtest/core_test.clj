@@ -666,6 +666,12 @@ FAIL - test-resources/test.yaml - error2
                             (fn [_] ["error1"]))))
       (testing "pathologies"
         (is (= {:summary {:total 1, :passed 0, :warnings 0, :failures 1},
+                :failure-report "\n\n1 tests, 0 passed, 0 warnings, 1 failures\n",
+                :result {"test-resources/test.yaml" [{:message [], :name nil, :rule-type :deny, :failure? true}]}}
+               (conjtest/test valid-yaml
+                              ^{:rule/type :deny}
+                              (fn [_] []))))
+        (is (= {:summary {:total 1, :passed 0, :warnings 0, :failures 1},
                 :failure-report "FAIL - test-resources/test.yaml - :conjtest/rule-validation-failed
 
 1 tests, 0 passed, 0 warnings, 1 failures
@@ -689,6 +695,12 @@ FAIL - test-resources/test.yaml - error2
                (conjtest/test valid-yaml
                               ^{:rule/type :deny}
                               (fn [_] [false]))))
+        (is (= {:summary {:total 1, :passed 1, :warnings 0, :failures 0},
+                :summary-report "1 tests, 1 passed, 0 warnings, 0 failures\n",
+                :result {"test-resources/test.yaml" [{:message nil, :name nil, :rule-type :allow, :failure? false}]}}
+               (conjtest/test valid-yaml
+                              ^{:rule/type :allow}
+                              (fn [_] []))))
         (is (= {:summary {:total 1, :passed 1, :warnings 0, :failures 0},
                 :summary-report "1 tests, 1 passed, 0 warnings, 0 failures\n",
                 :result {"test-resources/test.yaml" [{:message nil, :name nil, :rule-type :allow, :failure? false}]}}
