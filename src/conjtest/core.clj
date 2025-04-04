@@ -104,20 +104,20 @@
                                                      :rule-target rule-target)))))
                inputs))))
 
-(defn resolve-ns-functions
+(defn -resolve-ns-functions
   [namespace]
   (->> (filter (comp rule? second) (ns-publics namespace))
        (map second)))
 
-(defn resolve-functions
+(defn -resolve-functions
   [rules]
   (->> (mapcat (fn [x]
                  (cond
                    (map? x) [x]
                    (fn? x) [x]
                    (var? x) (filter rule? [x])
-                   (instance? clojure.lang.Namespace x) (resolve-ns-functions x)
-                   (symbol? x) (resolve-ns-functions x)))
+                   (instance? clojure.lang.Namespace x) (-resolve-ns-functions x)
+                   (symbol? x) (-resolve-ns-functions x)))
                rules)
        (sort #(compare (str %1) (str %2)))
        (dedupe)))
@@ -221,22 +221,22 @@
              :result result}
       trace (assoc :trace-report (-trace-report result)))))
 
-(defn filter-results
+(defn -filter-results
   [results {:keys [fail-on-warn]}]
   (filter #(and ((cond-> #{:allow :deny}
                    fail-on-warn (conj :warn)) (:rule-type %))
                 (:failure? %))
           results))
 
-(defn any-failures?
+(defn -any-failures?
   [result opts]
   (boolean (not-empty
-            (cond
-              (map? result)
-              (mapcat (fn [[_filename evaluations]] (filter-results evaluations opts)) result)
+             (cond
+               (map? result)
+               (mapcat (fn [[_filename evaluations]] (-filter-results evaluations opts)) result)
 
-              (coll? result)
-              (filter-results result opts)))))
+               (coll? result)
+               (-filter-results result opts)))))
 
 (defn test-with-opts
   ([inputs rules]
@@ -245,17 +245,13 @@
    (let [result (cond
                   (map? inputs)
                   (apply merge-with into (map #(-test inputs % opts)
-                                              (resolve-functions rules)))
+                                              (-resolve-functions rules)))
                   (vector? inputs)
                   (mapcat identity (keep (comp not-empty #(-test inputs % opts))
-                                         (resolve-functions rules))))]
-     (if (any-failures? result opts)
+                                         (-resolve-functions rules))))]
+     (if (-any-failures? result opts)
        (-failure-report result opts)
        (-summary-report result opts)))))
-
-(defn test
-  [inputs & rules]
-  (test-with-opts inputs rules))
 
 (defn test-with-opts!
   ([inputs rules]
@@ -267,6 +263,10 @@
      (cond
        (some? failure-report) (throw (ex-info failure-report summary))
        (some? summary-report) report))))
+
+(defn test
+  [inputs & rules]
+  (test-with-opts inputs rules))
 
 (defn test!
   [inputs & rules]
