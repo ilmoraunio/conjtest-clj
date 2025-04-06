@@ -50,6 +50,22 @@
       (and (var? rule) (:rule (var-get rule)))
       rule))
 
+(defn -failure?
+  [rule-type result]
+  (boolean (case rule-type
+             :allow (or (not result)
+                        (string? result)
+                        (and (coll? result)
+                             (not-empty result)
+                             (every? string? result)))
+             (:warn :deny) (when result
+                             (cond (and (coll? result)
+                                        (not-empty result)
+                                        (every? string? result)) true
+                                   (and (coll? result)
+                                        (empty? result)) false
+                                   :else result)))))
+
 (defn -test
   [inputs rule {:keys [trace] :as _opts}]
   (let [rule-type (or (rule-type rule) :deny)]
@@ -67,18 +83,7 @@
                                        trace (with-out-str (clojure.stacktrace/print-stack-trace e))
                                        (instance? clojure.lang.ExceptionInfo (class e)) (ex-message e)
                                        :else (str e))))
-                       failure (boolean (case rule-type
-                                          :allow (or (not result)
-                                                     (string? result)
-                                                     (and (coll? result)
-                                                          (not-empty result)
-                                                          (every? string? result)))
-                                          (:warn :deny) (when result
-                                                          (if (and (coll? result)
-                                                                   (not-empty result)
-                                                                   (every? string? result))
-                                                            true
-                                                            result))))]
+                       failure (-failure? rule-type result)]
                    (cond
                      (map? inputs) [(first input) [(cond-> {:message (when (true? failure)
                                                                        (or (message-or-nil result)
