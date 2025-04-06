@@ -13,7 +13,9 @@ This project uses [Break Versioning][breakver]. The version numbers follow a
 
 [breakver]: https://github.com/ptaoussanis/encore/blob/master/BREAK-VERSIONING.md
 
-## 0.3.0-SNAPSHOT
+## 0.3.1-SNAPSHOT
+
+## 0.3.0
 
 - Fix failure-report for vector-based input [7e6520a](https://github.com/ilmoraunio/conjtest-clj/commit/7e6520a9c600417e487dc5959a9871ece8400725)
 - Clarify failures for multiple messages [46873d2](https://github.com/ilmoraunio/conjtest-clj/commit/46873d2c2484f3554db92d02b15cbdbcf7fba8d2)
