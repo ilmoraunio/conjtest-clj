@@ -83,7 +83,7 @@ collection of inputs using a vector.
 See [tests](./test/conjtest/core_test.clj) for more usage examples.
 
 For documentation on policies, see [Usage
-chapter](https://conjtest.github.io#usage) from Conjtest book.
+chapter](https://user-guide.conjtest.org#usage) from Conjtest book.
 
 For how to integrate with Babashka and
 [ilmoraunio/conjtest](https://github.com/ilmoraunio/pod-ilmoraunio-conjtest)
