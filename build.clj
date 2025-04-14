@@ -33,7 +33,7 @@
                 :scm {:url "https://github.com/ilmoraunio/conjtest-clj"
                       :connection "scm:git:git://github.com/ilmoraunio/conjtest-clj.git"
                       :tag (if is-release
-                             version
+                             (str "v" version)
                              (b/git-process {:git-args "rev-parse HEAD"}))}
                 :pom-data [[:licenses
                             [:license
