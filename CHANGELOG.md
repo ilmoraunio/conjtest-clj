@@ -13,6 +13,10 @@ This project uses [Break Versioning][breakver]. The version numbers follow a
 
 [breakver]: https://github.com/ptaoussanis/encore/blob/master/BREAK-VERSIONING.md
 
+## 0.3.2-SNAPSHOT
+
+- pass the right tag [5495f7d](https://github.com/ilmoraunio/conjtest-clj/commit/5495f7d058df8e9bb72ee6d0cf4a862674629c17)
+
 ## 0.3.1
 
 - Fix empty collection to be regarded as falsey [fbfad59](https://github.com/ilmoraunio/conjtest-clj/commit/fbfad59b2a7a4320014756312d1c487aafff0b56)
