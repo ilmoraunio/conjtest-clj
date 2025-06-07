@@ -2,7 +2,8 @@
   (:refer-clojure :exclude [test])
   (:require [clojure.stacktrace]
             [clojure.string :as string]
-            [clojure.string]))
+            [clojure.string]
+            [malli.core :as m]))
 
 (defn message-or-nil
   [x]
@@ -46,9 +47,12 @@
 
 (defn rule-function
   [rule]
-  (or (:rule rule)
-      (and (var? rule) (:rule (var-get rule)))
-      rule))
+  (let [f-or-schema (or (:rule rule)
+                        (and (var? rule) (:rule (var-get rule)))
+                        rule)]
+    (if (vector? f-or-schema)
+      (partial m/validate f-or-schema)
+      f-or-schema)))
 
 (defn -failure?
   [rule-type result]
