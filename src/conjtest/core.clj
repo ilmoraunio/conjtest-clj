@@ -126,7 +126,8 @@
                    (fn? x) [x]
                    (var? x) (filter rule? [x])
                    (instance? clojure.lang.Namespace x) (-resolve-ns-functions x)
-                   (symbol? x) (-resolve-ns-functions x)))
+                   (symbol? x) (-resolve-ns-functions x)
+                   (vector? x) [x]))
                rules)
        (sort #(compare (str %1) (str %2)))
        (dedupe)))
