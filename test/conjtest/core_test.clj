@@ -527,6 +527,163 @@
                                            (= "Service" (:kind input))
                                            (not= 80 (-> input :spec :ports first :port)))
                                   "overridden local-level message"))))))))
+  (testing "malli schemas"
+    (testing "allow"
+      (is (= {:summary {:total 1, :passed 1, :warnings 0, :failures 0},
+              :summary-report "1 tests, 1 passed, 0 warnings, 0 failures\n",
+              :result {"test-resources/test.yaml" [{:message nil, :name nil, :rule-type :allow, :failure? false}]}}
+             (conjtest/test valid-yaml
+                            ^{:rule/type :allow}
+                            [:map
+                             [:apiVersion [:= "v1"]]
+                             [:kind [:= "Service"]]
+                             [:spec [:map [:ports [:+ [:map [:port [:= 80]]]]]]]])))
+      (is (= {:summary {:total 1, :passed 0, :warnings 0, :failures 1},
+              :failure-report "FAIL - test-resources/test.yaml - :conjtest/rule-validation-failed\n\n1 tests, 0 passed, 0 warnings, 1 failures\n",
+              :result {"test-resources/test.yaml" [{:message :conjtest/rule-validation-failed,
+                                                    :name nil,
+                                                    :rule-type :allow,
+                                                    :failure? true}]}}
+             (conjtest/test invalid-yaml
+                            ^{:rule/type :allow}
+                            [:map
+                             [:apiVersion [:= "v1"]]
+                             [:kind [:= "Service"]]
+                             [:spec [:map [:ports [:+ [:map [:port [:= 80]]]]]]]])))
+      (testing "closed schema"
+        (is (= {:summary {:total 1, :passed 1, :warnings 0, :failures 0},
+                :summary-report "1 tests, 1 passed, 0 warnings, 0 failures\n",
+                :result {"test-resources/test.yaml" [{:message nil, :name nil, :rule-type :allow, :failure? false}]}}
+               (conjtest/test valid-yaml
+                              ^{:rule/type :allow}
+                              [:map {:closed true}
+                               [:apiVersion [:= "v1"]]
+                               [:kind [:= "Service"]]
+                               [:metadata [:map [:name :string]]]
+                               [:spec [:map
+                                       [:type :string]
+                                       [:ports [:+ [:map [:port [:= 80]]]]]
+                                       [:selector [:map [:app :string]]]]]])))
+        (is (= {:summary {:total 1, :passed 0, :warnings 0, :failures 1},
+                :failure-report "FAIL - test-resources/test.yaml - :conjtest/rule-validation-failed\n\n1 tests, 0 passed, 0 warnings, 1 failures\n",
+                :result {"test-resources/test.yaml" [{:message :conjtest/rule-validation-failed,
+                                                      :name nil,
+                                                      :rule-type :allow,
+                                                      :failure? true}]}}
+               (conjtest/test invalid-yaml
+                              ^{:rule/type :allow}
+                              [:map {:closed true}
+                               [:apiVersion [:= "v1"]]
+                               [:kind [:= "Service"]]
+                               [:metadata [:map [:name :string]]]
+                               [:spec [:map
+                                       [:type :string]
+                                       [:ports [:+ [:map [:port [:= 80]]]]]
+                                       [:selector [:map [:app :string]]]]]])))))
+    (testing "deny"
+      (is (= {:summary {:total 1, :passed 1, :warnings 0, :failures 0},
+              :summary-report "1 tests, 1 passed, 0 warnings, 0 failures\n",
+              :result {"test-resources/test.yaml" [{:message nil, :name nil, :rule-type :deny, :failure? false}]}}
+             (conjtest/test valid-yaml
+                            ^{:rule/type :deny}
+                            [:map
+                             [:apiVersion [:= "v1"]]
+                             [:kind [:= "Service"]]
+                             [:spec [:map [:ports [:+ [:map [:port [:not= 80]]]]]]]])))
+      (is (= {:summary {:total 1, :passed 0, :warnings 0, :failures 1},
+              :failure-report "FAIL - test-resources/test.yaml - :conjtest/rule-validation-failed\n\n1 tests, 0 passed, 0 warnings, 1 failures\n",
+              :result {"test-resources/test.yaml" [{:message :conjtest/rule-validation-failed,
+                                                    :name nil,
+                                                    :rule-type :deny,
+                                                    :failure? true}]}}
+             (conjtest/test invalid-yaml
+                            ^{:rule/type :deny}
+                            [:map
+                             [:apiVersion [:= "v1"]]
+                             [:kind [:= "Service"]]
+                             [:spec [:map [:ports [:+ [:map [:port [:not= 80]]]]]]]])))
+      (testing "closed schema"
+        (is (= {:summary {:total 1, :passed 1, :warnings 0, :failures 0},
+                :summary-report "1 tests, 1 passed, 0 warnings, 0 failures\n",
+                :result {"test-resources/test.yaml" [{:message nil, :name nil, :rule-type :deny, :failure? false}]}}
+               (conjtest/test valid-yaml
+                              ^{:rule/type :deny}
+                              [:map {:closed true}
+                               [:apiVersion [:= "v1"]]
+                               [:kind [:= "Service"]]
+                               [:metadata [:map [:name :string]]]
+                               [:spec [:map
+                                       [:type :string]
+                                       [:ports [:+ [:map [:port [:not= 80]]]]]
+                                       [:selector [:map [:app :string]]]]]])))
+        (is (= {:summary {:total 1, :passed 0, :warnings 0, :failures 1},
+                :failure-report "FAIL - test-resources/test.yaml - :conjtest/rule-validation-failed\n\n1 tests, 0 passed, 0 warnings, 1 failures\n",
+                :result {"test-resources/test.yaml" [{:message :conjtest/rule-validation-failed,
+                                                      :name nil,
+                                                      :rule-type :deny,
+                                                      :failure? true}]}}
+               (conjtest/test invalid-yaml
+                              ^{:rule/type :deny}
+                              [:map {:closed true}
+                               [:apiVersion [:= "v1"]]
+                               [:kind [:= "Service"]]
+                               [:metadata [:map [:name :string]]]
+                               [:spec [:map
+                                       [:type :string]
+                                       [:ports [:+ [:map [:port [:not= 80]]]]]
+                                       [:selector [:map [:app :string]]]]]])))))
+    (testing "warn"
+      (is (= {:summary {:total 1, :passed 1, :warnings 0, :failures 0},
+              :summary-report "1 tests, 1 passed, 0 warnings, 0 failures\n",
+              :result {"test-resources/test.yaml" [{:message nil, :name nil, :rule-type :warn, :failure? false}]}}
+             (conjtest/test valid-yaml
+                            ^{:rule/type :warn}
+                            [:map
+                             [:apiVersion [:= "v1"]]
+                             [:kind [:= "Service"]]
+                             [:spec [:map [:ports [:+ [:map [:port [:not= 80]]]]]]]])))
+      (is (= {:summary {:total 1, :passed 0, :warnings 1, :failures 0},
+              :summary-report "1 tests, 0 passed, 1 warnings, 0 failures\n",
+              :result {"test-resources/test.yaml" [{:message :conjtest/rule-validation-failed,
+                                                    :name nil,
+                                                    :rule-type :warn,
+                                                    :failure? true}]}}
+             (conjtest/test invalid-yaml
+                            ^{:rule/type :warn}
+                            [:map
+                             [:apiVersion [:= "v1"]]
+                             [:kind [:= "Service"]]
+                             [:spec [:map [:ports [:+ [:map [:port [:not= 80]]]]]]]])))
+      (testing "closed schema"
+        (is (= {:summary {:total 1, :passed 1, :warnings 0, :failures 0},
+                :summary-report "1 tests, 1 passed, 0 warnings, 0 failures\n",
+                :result {"test-resources/test.yaml" [{:message nil, :name nil, :rule-type :warn, :failure? false}]}}
+               (conjtest/test valid-yaml
+                              ^{:rule/type :warn}
+                              [:map {:closed true}
+                               [:apiVersion [:= "v1"]]
+                               [:kind [:= "Service"]]
+                               [:metadata [:map [:name :string]]]
+                               [:spec [:map
+                                       [:type :string]
+                                       [:ports [:+ [:map [:port [:not= 80]]]]]
+                                       [:selector [:map [:app :string]]]]]])))
+        (is (= {:summary {:total 1, :passed 0, :warnings 1, :failures 0},
+                :summary-report "1 tests, 0 passed, 1 warnings, 0 failures\n",
+                :result {"test-resources/test.yaml" [{:message :conjtest/rule-validation-failed,
+                                                      :name nil,
+                                                      :rule-type :warn,
+                                                      :failure? true}]}}
+               (conjtest/test invalid-yaml
+                              ^{:rule/type :warn}
+                              [:map {:closed true}
+                               [:apiVersion [:= "v1"]]
+                               [:kind [:= "Service"]]
+                               [:metadata [:map [:name :string]]]
+                               [:spec [:map
+                                       [:type :string]
+                                       [:ports [:+ [:map [:port [:not= 80]]]]]
+                                       [:selector [:map [:app :string]]]]]]))))))
   (testing "multiple map entries"
     (is (= {:summary {:total 4, :passed 2, :warnings 0, :failures 2}
             :result {"test-resources/test.yaml" [{:message nil,
