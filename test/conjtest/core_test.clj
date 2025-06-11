@@ -31,7 +31,7 @@
     (testing "triggered"
       (is (= {:summary {:total 5, :passed 0, :warnings 0, :failures 5}
               :result {"test-resources/test.yaml" [{:failure? true
-                                                    :message "port should be 80"
+                                                    :message "{:spec {:ports [#ordered/map ([:port [\"should be 80\"]])]}}"
                                                     :name "allow-malli-rule"
                                                     :rule-type :allow}
                                                    {:message :conjtest/rule-validation-failed
@@ -208,7 +208,7 @@
     (testing "triggered"
       (is (= {:summary {:total 15, :passed 0, :warnings 5, :failures 10}
               :result {"test-resources/test.yaml" [{:failure? true
-                                                    :message "port should be 80"
+                                                    :message "{:spec {:ports [#ordered/map ([:port [\"should be 80\"]])]}}"
                                                     :name "allow-malli-rule"
                                                     :rule-type :allow}
                                                    {:message :conjtest/rule-validation-failed,
@@ -539,8 +539,8 @@
                              [:kind [:= "Service"]]
                              [:spec [:map [:ports [:+ [:map [:port [:= 80]]]]]]]])))
       (is (= {:summary {:total 1, :passed 0, :warnings 0, :failures 1},
-              :failure-report "FAIL - test-resources/test.yaml - :conjtest/rule-validation-failed\n\n1 tests, 0 passed, 0 warnings, 1 failures\n",
-              :result {"test-resources/test.yaml" [{:message :conjtest/rule-validation-failed,
+              :failure-report "FAIL - test-resources/test.yaml - {:spec {:ports [#ordered/map ([:port [\"should be 80\"]])]}}\n\n1 tests, 0 passed, 0 warnings, 1 failures\n",
+              :result {"test-resources/test.yaml" [{:message "{:spec {:ports [#ordered/map ([:port [\"should be 80\"]])]}}",
                                                     :name nil,
                                                     :rule-type :allow,
                                                     :failure? true}]}}
@@ -565,8 +565,8 @@
                                        [:ports [:+ [:map [:port [:= 80]]]]]
                                        [:selector [:map [:app :string]]]]]])))
         (is (= {:summary {:total 1, :passed 0, :warnings 0, :failures 1},
-                :failure-report "FAIL - test-resources/test.yaml - :conjtest/rule-validation-failed\n\n1 tests, 0 passed, 0 warnings, 1 failures\n",
-                :result {"test-resources/test.yaml" [{:message :conjtest/rule-validation-failed,
+                :failure-report "FAIL - test-resources/test.yaml - {:spec {:ports [#ordered/map ([:port [\"should be 80\"]])]}}\n\n1 tests, 0 passed, 0 warnings, 1 failures\n",
+                :result {"test-resources/test.yaml" [{:message "{:spec {:ports [#ordered/map ([:port [\"should be 80\"]])]}}",
                                                       :name nil,
                                                       :rule-type :allow,
                                                       :failure? true}]}}

@@ -3,7 +3,8 @@
   (:require [clojure.stacktrace]
             [clojure.string :as string]
             [clojure.string]
-            [malli.core :as m]))
+            [malli.core :as m]
+            [malli.error :as me]))
 
 (defn message-or-nil
   [x]
@@ -45,14 +46,20 @@
       (and (var? rule) (:message (var-get rule)))
       (:rule/message (meta rule))))
 
+(defn -f-or-schema
+  [rule]
+  (or (:rule rule)
+      (and (var? rule) (:rule (var-get rule)))
+      rule))
+
+(defn malli-schema?
+  [rule]
+  (vector? (-f-or-schema rule)))
+
 (defn rule-function
   [rule]
-  (let [f-or-schema (or (:rule rule)
-                        (and (var? rule) (:rule (var-get rule)))
-                        rule)]
-    (if (vector? f-or-schema)
-      (partial m/validate f-or-schema)
-      f-or-schema)))
+  (cond->> (-f-or-schema rule)
+    (malli-schema? rule) (partial m/validate)))
 
 (defn -failure?
   [rule-type result]
@@ -90,7 +97,10 @@
                        failure (-failure? rule-type result)]
                    (cond
                      (map? inputs) [(first input) [(cond-> {:message (when (true? failure)
-                                                                       (or (message-or-nil result)
+                                                                       (or (and (malli-schema? rule)
+                                                                                (some-> (me/humanize (m/explain (-f-or-schema rule) rule-target))
+                                                                                        str))
+                                                                           (message-or-nil result)
                                                                            (messages-or-nil result)
                                                                            (rule-message rule)
                                                                            :conjtest/rule-validation-failed))
@@ -101,7 +111,10 @@
                                                                   :rule rule
                                                                   :rule-target rule-target))]]
                      (vector? inputs) (cond-> {:message (when (true? failure)
-                                                          (or (message-or-nil result)
+                                                          (or (and (malli-schema? rule)
+                                                                   (some-> (me/humanize (m/explain (-f-or-schema rule) rule-target))
+                                                                           str))
+                                                              (message-or-nil result)
                                                               (messages-or-nil result)
                                                               (rule-message rule)
                                                               :conjtest/rule-validation-failed))
@@ -254,7 +267,7 @@
 
   `inputs` either accepts a map of filenames-to-data or a vec of data. Data can be any data structure.
 
-  `rules` either accepts a vector of functions, vars, or namespaces.
+  `rules` either accepts a vector of functions, malli schemas, vars, or namespaces.
 
   `opts` optionally accepts a map of options with support for following configuration:
   - `:fail-on-warn`, returns failure report if warn policies fail
@@ -279,7 +292,7 @@
 
   `inputs` either accepts a map of filenames-to-data or a vec of data. Data can be any data structure.
 
-  `rules` either accepts a vector of functions, vars, or namespaces.
+  `rules` either accepts a vector of functions, malli schemas, vars, or namespaces.
 
   `opts` optionally accepts a map of options with support for following configuration:
   - `:fail-on-warn`, throws if warn policies fail
@@ -300,7 +313,7 @@
 
   `inputs` either accepts a map of filenames-to-data or a vec of data. Data can be any data structure.
 
-  `rules` either accepts functions, vars, or namespaces."
+  `rules` either accepts functions, malli schemas, vars, or namespaces."
   [inputs & rules]
   (test-with-opts inputs rules))
 
@@ -310,6 +323,6 @@
 
   `inputs` either accepts a map of filenames-to-data or a vec of data. Data can be any data structure.
 
-  `rules` either accepts functions, vars, or namespaces."
+  `rules` either accepts functions, malli schemas, vars, or namespaces."
   [inputs & rules]
   (test-with-opts! inputs rules))
