@@ -6,7 +6,7 @@
 Validate data structures against policies.
 
 Conjtest-clj is a Clojure/babashka library for validating parsed data
-structures against policies, which are just Clojure functions.
+structures against policies, which are just Clojure functions or malli schemas.
 
 Part of the [conjtest](https://github.com/ilmoraunio/conjtest) project.
 
