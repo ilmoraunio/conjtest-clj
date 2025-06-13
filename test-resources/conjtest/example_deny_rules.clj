@@ -31,10 +31,7 @@
        (not= 80 (-> input :spec :ports first :port))))
 
 (def deny-malli-rule
-  {:type :deny
-   :name "deny-malli-rule"
-   :message "port should be 80"
-   :rule [:map
-          [:apiVersion [:= "v1"]]
-          [:kind [:= "Service"]]
-          [:spec [:map [:ports [:+ [:map [:port [:not= 80]]]]]]]]})
+  [:map
+   [:apiVersion [:= "v1"]]
+   [:kind [:= "Service"]]
+   [:spec [:map [:ports [:+ [:map [:port [:not= 80]]]]]]]])

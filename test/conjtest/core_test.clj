@@ -90,7 +90,7 @@
     (testing "triggered"
       (is (= {:summary {:total 5, :passed 0, :warnings 0, :failures 5}
               :result {"test-resources/test.yaml" [{:failure? true
-                                                    :message "port should be 80"
+                                                    :message :conjtest/rule-validation-failed
                                                     :name "deny-malli-rule"
                                                     :rule-type :deny}
                                                    {:message :conjtest/rule-validation-failed
@@ -153,7 +153,7 @@
                                                     :rule-type :warn
                                                     :failure? true}
                                                    {:failure? true
-                                                    :message "port should be 80"
+                                                    :message :conjtest/rule-validation-failed
                                                     :name "warn-malli-rule"
                                                     :rule-type :warn}
                                                    {:message :conjtest/rule-validation-failed
@@ -228,7 +228,7 @@
                                                     :rule-type :allow,
                                                     :failure? true}
                                                    {:failure? true
-                                                    :message "port should be 80"
+                                                    :message :conjtest/rule-validation-failed
                                                     :name "deny-malli-rule"
                                                     :rule-type :deny}
                                                    {:message :conjtest/rule-validation-failed,
@@ -252,7 +252,7 @@
                                                     :rule-type :warn,
                                                     :failure? true}
                                                    {:failure? true
-                                                    :message "port should be 80"
+                                                    :message :conjtest/rule-validation-failed
                                                     :name "warn-malli-rule"
                                                     :rule-type :warn}
                                                    {:message :conjtest/rule-validation-failed,
