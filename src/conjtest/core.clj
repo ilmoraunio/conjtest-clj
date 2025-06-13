@@ -50,6 +50,7 @@
   [rule]
   (or (:rule rule)
       (and (var? rule) (:rule (var-get rule)))
+      (and (var? rule) (var-get rule))
       rule))
 
 (defn malli-schema?
