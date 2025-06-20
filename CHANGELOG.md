@@ -13,6 +13,8 @@ This project uses [Break Versioning][breakver]. The version numbers follow a
 
 [breakver]: https://github.com/ptaoussanis/encore/blob/master/BREAK-VERSIONING.md
 
+## 0.4.1-SNAPSHOT
+
 ## 0.4.0
 
 - Support declarative policies via malli schemas [#1](https://github.com/ilmoraunio/conjtest-clj/pull/1)
