@@ -59,8 +59,9 @@
 
 (defn rule-function
   [rule]
-  (cond->> (-f-or-schema rule)
-    (malli-schema? rule) (partial m/validate)))
+  (if (malli-schema? rule)
+    (partial m/validate (-f-or-schema rule))
+    (-f-or-schema rule)))
 
 (defn -failure?
   [rule-type result]
