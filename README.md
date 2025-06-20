@@ -27,7 +27,7 @@ Check [CHANGELOG.md](CHANGELOG.md) for any breaking changes.
 [API documentation](https://cljdoc.org/d/org.conjtest/conjtest-clj)
 
 ```bash
-clj -Sdeps '{:deps {org.conjtest/conjtest-clj {:mvn/version "0.3.2"} org.flatland/ordered {:mvn/version "1.15.12"}}}'
+clj -Sdeps '{:deps {org.conjtest/conjtest-clj {:mvn/version "0.4.0"} org.flatland/ordered {:mvn/version "1.15.12"}}}'
 ```
 
 ```clojure
