@@ -29,8 +29,12 @@
 (deftest rules-test
   (testing "allow rules"
     (testing "triggered"
-      (is (= {:summary {:total 4, :passed 0, :warnings 0, :failures 4}
-              :result {"test-resources/test.yaml" [{:message :conjtest/rule-validation-failed
+      (is (= {:summary {:total 5, :passed 0, :warnings 0, :failures 5}
+              :result {"test-resources/test.yaml" [{:failure? true
+                                                    :message "{:spec {:ports [#ordered/map ([:port [\"should be 80\"]])]}}"
+                                                    :name "allow-malli-rule"
+                                                    :rule-type :allow}
+                                                   {:message :conjtest/rule-validation-failed
                                                     :name "allow-my-absolute-bare-rule"
                                                     :rule-type :allow
                                                     :failure? true}
@@ -50,11 +54,16 @@
                                 #'conjtest.example-allow-rules/allow-my-rule
                                 #'conjtest.example-allow-rules/differently-named-allow-rule
                                 #'conjtest.example-allow-rules/allow-my-bare-rule
-                                #'conjtest.example-allow-rules/allow-my-absolute-bare-rule)
+                                #'conjtest.example-allow-rules/allow-my-absolute-bare-rule
+                                #'conjtest.example-allow-rules/allow-malli-rule)
                  (select-keys [:result :summary])))))
     (testing "not triggered"
-      (is (= {:summary {:total 4, :passed 4, :warnings 0, :failures 0}
-              :result {"test-resources/test.yaml" [{:message nil,
+      (is (= {:summary {:total 5, :passed 5, :warnings 0, :failures 0}
+              :result {"test-resources/test.yaml" [{:failure? false
+                                                    :message nil
+                                                    :name "allow-malli-rule"
+                                                    :rule-type :allow}
+                                                   {:message nil,
                                                     :name "allow-my-absolute-bare-rule",
                                                     :rule-type :allow,
                                                     :failure? false}
@@ -74,12 +83,17 @@
                                 #'conjtest.example-allow-rules/allow-my-rule
                                 #'conjtest.example-allow-rules/differently-named-allow-rule
                                 #'conjtest.example-allow-rules/allow-my-bare-rule
-                                #'conjtest.example-allow-rules/allow-my-absolute-bare-rule)
+                                #'conjtest.example-allow-rules/allow-my-absolute-bare-rule
+                                #'conjtest.example-allow-rules/allow-malli-rule)
                  (select-keys [:result :summary]))))))
   (testing "deny rules"
     (testing "triggered"
-      (is (= {:summary {:total 4, :passed 0, :warnings 0, :failures 4}
-              :result {"test-resources/test.yaml" [{:message :conjtest/rule-validation-failed
+      (is (= {:summary {:total 5, :passed 0, :warnings 0, :failures 5}
+              :result {"test-resources/test.yaml" [{:failure? true
+                                                    :message :conjtest/rule-validation-failed
+                                                    :name "deny-malli-rule"
+                                                    :rule-type :deny}
+                                                   {:message :conjtest/rule-validation-failed
                                                     :name "deny-my-absolute-bare-rule"
                                                     :rule-type :deny
                                                     :failure? true}
@@ -99,11 +113,16 @@
                                 #'conjtest.example-deny-rules/deny-my-rule
                                 #'conjtest.example-deny-rules/differently-named-deny-rule
                                 #'conjtest.example-deny-rules/deny-my-bare-rule
-                                #'conjtest.example-deny-rules/deny-my-absolute-bare-rule)
+                                #'conjtest.example-deny-rules/deny-my-absolute-bare-rule
+                                #'conjtest.example-deny-rules/deny-malli-rule)
                  (select-keys [:result :summary])))))
     (testing "not triggered"
-      (is (= {:summary {:total 4, :passed 4, :warnings 0, :failures 0}
-              :result {"test-resources/test.yaml" [{:message nil,
+      (is (= {:summary {:total 5, :passed 5, :warnings 0, :failures 0}
+              :result {"test-resources/test.yaml" [{:failure? false
+                                                    :message nil
+                                                    :name "deny-malli-rule"
+                                                    :rule-type :deny}
+                                                   {:message nil,
                                                     :name "deny-my-absolute-bare-rule",
                                                     :rule-type :deny,
                                                     :failure? false}
@@ -123,15 +142,20 @@
                                 #'conjtest.example-deny-rules/deny-my-rule
                                 #'conjtest.example-deny-rules/differently-named-deny-rule
                                 #'conjtest.example-deny-rules/deny-my-bare-rule
-                                #'conjtest.example-deny-rules/deny-my-absolute-bare-rule)
+                                #'conjtest.example-deny-rules/deny-my-absolute-bare-rule
+                                #'conjtest.example-deny-rules/deny-malli-rule)
                  (select-keys [:result :summary]))))))
   (testing "warn rules"
     (testing "triggered"
-      (is (= {:summary {:total 4, :passed 0, :warnings 4, :failures 0}
+      (is (= {:summary {:total 5, :passed 0, :warnings 5, :failures 0}
               :result {"test-resources/test.yaml" [{:message "port should be 80"
                                                     :name "differently-named-warn-rule"
                                                     :rule-type :warn
                                                     :failure? true}
+                                                   {:failure? true
+                                                    :message :conjtest/rule-validation-failed
+                                                    :name "warn-malli-rule"
+                                                    :rule-type :warn}
                                                    {:message :conjtest/rule-validation-failed
                                                     :name "warn-my-absolute-bare-rule"
                                                     :rule-type :warn
@@ -148,14 +172,19 @@
                                 #'conjtest.example-warn-rules/warn-my-rule
                                 #'conjtest.example-warn-rules/differently-named-warn-rule
                                 #'conjtest.example-warn-rules/warn-my-bare-rule
-                                #'conjtest.example-warn-rules/warn-my-absolute-bare-rule)
+                                #'conjtest.example-warn-rules/warn-my-absolute-bare-rule
+                                #'conjtest.example-warn-rules/warn-malli-rule)
                  (select-keys [:result :summary])))))
     (testing "not triggered"
-      (is (= {:summary {:total 4, :passed 4, :warnings 0, :failures 0}
+      (is (= {:summary {:total 5, :passed 5, :warnings 0, :failures 0}
               :result {"test-resources/test.yaml" [{:message nil,
                                                     :name "differently-named-warn-rule",
                                                     :rule-type :warn,
                                                     :failure? false}
+                                                   {:failure? false
+                                                    :message nil
+                                                    :name "warn-malli-rule"
+                                                    :rule-type :warn}
                                                    {:message nil,
                                                     :name "warn-my-absolute-bare-rule",
                                                     :rule-type :warn,
@@ -172,12 +201,17 @@
                                 #'conjtest.example-warn-rules/warn-my-rule
                                 #'conjtest.example-warn-rules/differently-named-warn-rule
                                 #'conjtest.example-warn-rules/warn-my-bare-rule
-                                #'conjtest.example-warn-rules/warn-my-absolute-bare-rule)
+                                #'conjtest.example-warn-rules/warn-my-absolute-bare-rule
+                                #'conjtest.example-warn-rules/warn-malli-rule)
                  (select-keys [:result :summary]))))))
   (testing "resolve functions via namespace"
     (testing "triggered"
-      (is (= {:summary {:total 12, :passed 0, :warnings 4, :failures 8}
-              :result {"test-resources/test.yaml" [{:message :conjtest/rule-validation-failed,
+      (is (= {:summary {:total 15, :passed 0, :warnings 5, :failures 10}
+              :result {"test-resources/test.yaml" [{:failure? true
+                                                    :message "{:spec {:ports [#ordered/map ([:port [\"should be 80\"]])]}}"
+                                                    :name "allow-malli-rule"
+                                                    :rule-type :allow}
+                                                   {:message :conjtest/rule-validation-failed,
                                                     :name "allow-my-absolute-bare-rule",
                                                     :rule-type :allow,
                                                     :failure? true}
@@ -193,6 +227,10 @@
                                                     :name "differently-named-allow-rule",
                                                     :rule-type :allow,
                                                     :failure? true}
+                                                   {:failure? true
+                                                    :message :conjtest/rule-validation-failed
+                                                    :name "deny-malli-rule"
+                                                    :rule-type :deny}
                                                    {:message :conjtest/rule-validation-failed,
                                                     :name "deny-my-absolute-bare-rule",
                                                     :rule-type :deny,
@@ -213,6 +251,10 @@
                                                     :name "differently-named-warn-rule",
                                                     :rule-type :warn,
                                                     :failure? true}
+                                                   {:failure? true
+                                                    :message :conjtest/rule-validation-failed
+                                                    :name "warn-malli-rule"
+                                                    :rule-type :warn}
                                                    {:message :conjtest/rule-validation-failed,
                                                     :name "warn-my-absolute-bare-rule",
                                                     :rule-type :warn,
@@ -236,8 +278,12 @@
                                 (the-ns 'conjtest.example-warn-rules))
                  (select-keys [:result :summary])))))
     (testing "not triggered"
-      (is (= {:summary {:total 12, :passed 12, :warnings 0, :failures 0}
-              :result {"test-resources/test.yaml" [{:message nil,
+      (is (= {:summary {:total 15, :passed 15, :warnings 0, :failures 0}
+              :result {"test-resources/test.yaml" [{:failure? false
+                                                    :message nil
+                                                    :name "allow-malli-rule"
+                                                    :rule-type :allow}
+                                                   {:message nil,
                                                     :name "allow-my-absolute-bare-rule",
                                                     :rule-type :allow,
                                                     :failure? false}
@@ -253,6 +299,10 @@
                                                     :name "differently-named-allow-rule",
                                                     :rule-type :allow,
                                                     :failure? false}
+                                                   {:failure? false
+                                                    :message nil
+                                                    :name "deny-malli-rule"
+                                                    :rule-type :deny}
                                                    {:message nil,
                                                     :name "deny-my-absolute-bare-rule",
                                                     :rule-type :deny,
@@ -273,6 +323,10 @@
                                                     :name "differently-named-warn-rule",
                                                     :rule-type :warn,
                                                     :failure? false}
+                                                   {:failure? false
+                                                    :message nil
+                                                    :name "warn-malli-rule"
+                                                    :rule-type :warn}
                                                    {:message nil,
                                                     :name "warn-my-absolute-bare-rule",
                                                     :rule-type :warn,
@@ -473,6 +527,292 @@
                                            (= "Service" (:kind input))
                                            (not= 80 (-> input :spec :ports first :port)))
                                   "overridden local-level message"))))))))
+  (testing "malli schemas"
+    (testing "allow"
+      (is (= {:summary {:total 1, :passed 1, :warnings 0, :failures 0},
+              :summary-report "1 tests, 1 passed, 0 warnings, 0 failures\n",
+              :result {"test-resources/test.yaml" [{:message nil, :name nil, :rule-type :allow, :failure? false}]}}
+             (conjtest/test valid-yaml
+                            ^{:rule/type :allow}
+                            [:map
+                             [:apiVersion [:= "v1"]]
+                             [:kind [:= "Service"]]
+                             [:spec [:map [:ports [:+ [:map [:port [:= 80]]]]]]]])
+             (conjtest/test valid-yaml
+                            {:type :allow
+                             :rule [:map
+                                    [:apiVersion [:= "v1"]]
+                                    [:kind [:= "Service"]]
+                                    [:spec [:map [:ports [:+ [:map [:port [:= 80]]]]]]]]})))
+      (is (= {:summary {:total 1, :passed 0, :warnings 0, :failures 1},
+              :failure-report "FAIL - test-resources/test.yaml - {:spec {:ports [#ordered/map ([:port [\"should be 80\"]])]}}\n\n1 tests, 0 passed, 0 warnings, 1 failures\n",
+              :result {"test-resources/test.yaml" [{:message "{:spec {:ports [#ordered/map ([:port [\"should be 80\"]])]}}",
+                                                    :name nil,
+                                                    :rule-type :allow,
+                                                    :failure? true}]}}
+             (conjtest/test invalid-yaml
+                            ^{:rule/type :allow}
+                            [:map
+                             [:apiVersion [:= "v1"]]
+                             [:kind [:= "Service"]]
+                             [:spec [:map [:ports [:+ [:map [:port [:= 80]]]]]]]])
+             (conjtest/test invalid-yaml
+                            {:type :allow
+                             :rule [:map
+                                    [:apiVersion [:= "v1"]]
+                                    [:kind [:= "Service"]]
+                                    [:spec [:map [:ports [:+ [:map [:port [:= 80]]]]]]]]})))
+      (testing "closed schema"
+        (is (= {:summary {:total 1, :passed 1, :warnings 0, :failures 0},
+                :summary-report "1 tests, 1 passed, 0 warnings, 0 failures\n",
+                :result {"test-resources/test.yaml" [{:message nil, :name nil, :rule-type :allow, :failure? false}]}}
+               (conjtest/test valid-yaml
+                              ^{:rule/type :allow}
+                              [:map {:closed true}
+                               [:apiVersion [:= "v1"]]
+                               [:kind [:= "Service"]]
+                               [:metadata [:map [:name :string]]]
+                               [:spec [:map
+                                       [:type :string]
+                                       [:ports [:+ [:map [:port [:= 80]]]]]
+                                       [:selector [:map [:app :string]]]]]])))
+        (is (= {:summary {:total 1, :passed 0, :warnings 0, :failures 1},
+                :failure-report "FAIL - test-resources/test.yaml - {:spec {:ports [#ordered/map ([:port [\"should be 80\"]])]}}\n\n1 tests, 0 passed, 0 warnings, 1 failures\n",
+                :result {"test-resources/test.yaml" [{:message "{:spec {:ports [#ordered/map ([:port [\"should be 80\"]])]}}",
+                                                      :name nil,
+                                                      :rule-type :allow,
+                                                      :failure? true}]}}
+               (conjtest/test invalid-yaml
+                              ^{:rule/type :allow}
+                              [:map {:closed true}
+                               [:apiVersion [:= "v1"]]
+                               [:kind [:= "Service"]]
+                               [:metadata [:map [:name :string]]]
+                               [:spec [:map
+                                       [:type :string]
+                                       [:ports [:+ [:map [:port [:= 80]]]]]
+                                       [:selector [:map [:app :string]]]]]])))))
+    (testing "deny"
+      (is (= {:summary {:total 1, :passed 1, :warnings 0, :failures 0},
+              :summary-report "1 tests, 1 passed, 0 warnings, 0 failures\n",
+              :result {"test-resources/test.yaml" [{:message nil, :name nil, :rule-type :deny, :failure? false}]}}
+             (conjtest/test valid-yaml
+                            ^{:rule/type :deny}
+                            [:map
+                             [:apiVersion [:= "v1"]]
+                             [:kind [:= "Service"]]
+                             [:spec [:map [:ports [:+ [:map [:port [:not= 80]]]]]]]])
+             ;; deny is implicit
+             (conjtest/test valid-yaml
+                            [:map
+                             [:apiVersion [:= "v1"]]
+                             [:kind [:= "Service"]]
+                             [:spec [:map [:ports [:+ [:map [:port [:not= 80]]]]]]]])
+             (conjtest/test valid-yaml
+                            {:type :deny
+                             :rule [:map
+                                    [:apiVersion [:= "v1"]]
+                                    [:kind [:= "Service"]]
+                                    [:spec [:map [:ports [:+ [:map [:port [:not= 80]]]]]]]]}))
+          (is (= {:summary {:total 1, :passed 0, :warnings 0, :failures 1},
+                  :failure-report "FAIL - test-resources/test.yaml - :conjtest/rule-validation-failed\n\n1 tests, 0 passed, 0 warnings, 1 failures\n",
+                  :result {"test-resources/test.yaml" [{:message :conjtest/rule-validation-failed,
+                                                        :name nil,
+                                                        :rule-type :deny,
+                                                        :failure? true}]}}
+                 (conjtest/test invalid-yaml
+                                ^{:rule/type :deny}
+                                [:map
+                                 [:apiVersion [:= "v1"]]
+                                 [:kind [:= "Service"]]
+                                 [:spec [:map [:ports [:+ [:map [:port [:not= 80]]]]]]]])
+                 (conjtest/test invalid-yaml
+                                [:map
+                                 [:apiVersion [:= "v1"]]
+                                 [:kind [:= "Service"]]
+                                 [:spec [:map [:ports [:+ [:map [:port [:not= 80]]]]]]]])
+                 (conjtest/test invalid-yaml
+                                {:type :deny
+                                 :rule [:map
+                                        [:apiVersion [:= "v1"]]
+                                        [:kind [:= "Service"]]
+                                        [:spec [:map [:ports [:+ [:map [:port [:not= 80]]]]]]]]}))))
+      (testing "closed schema"
+        (is (= {:summary {:total 1, :passed 1, :warnings 0, :failures 0},
+                :summary-report "1 tests, 1 passed, 0 warnings, 0 failures\n",
+                :result {"test-resources/test.yaml" [{:message nil, :name nil, :rule-type :deny, :failure? false}]}}
+               (conjtest/test valid-yaml
+                              ^{:rule/type :deny}
+                              [:map {:closed true}
+                               [:apiVersion [:= "v1"]]
+                               [:kind [:= "Service"]]
+                               [:metadata [:map [:name :string]]]
+                               [:spec [:map
+                                       [:type :string]
+                                       [:ports [:+ [:map [:port [:not= 80]]]]]
+                                       [:selector [:map [:app :string]]]]]])))
+        (is (= {:summary {:total 1, :passed 0, :warnings 0, :failures 1},
+                :failure-report "FAIL - test-resources/test.yaml - :conjtest/rule-validation-failed\n\n1 tests, 0 passed, 0 warnings, 1 failures\n",
+                :result {"test-resources/test.yaml" [{:message :conjtest/rule-validation-failed,
+                                                      :name nil,
+                                                      :rule-type :deny,
+                                                      :failure? true}]}}
+               (conjtest/test invalid-yaml
+                              ^{:rule/type :deny}
+                              [:map {:closed true}
+                               [:apiVersion [:= "v1"]]
+                               [:kind [:= "Service"]]
+                               [:metadata [:map [:name :string]]]
+                               [:spec [:map
+                                       [:type :string]
+                                       [:ports [:+ [:map [:port [:not= 80]]]]]
+                                       [:selector [:map [:app :string]]]]]])))))
+    (testing "warn"
+      (is (= {:summary {:total 1, :passed 1, :warnings 0, :failures 0},
+              :summary-report "1 tests, 1 passed, 0 warnings, 0 failures\n",
+              :result {"test-resources/test.yaml" [{:message nil, :name nil, :rule-type :warn, :failure? false}]}}
+             (conjtest/test valid-yaml
+                            ^{:rule/type :warn}
+                            [:map
+                             [:apiVersion [:= "v1"]]
+                             [:kind [:= "Service"]]
+                             [:spec [:map [:ports [:+ [:map [:port [:not= 80]]]]]]]])
+             (conjtest/test valid-yaml
+                            {:type :warn
+                             :rule [:map
+                                    [:apiVersion [:= "v1"]]
+                                    [:kind [:= "Service"]]
+                                    [:spec [:map [:ports [:+ [:map [:port [:not= 80]]]]]]]]})))
+      (is (= {:summary {:total 1, :passed 0, :warnings 1, :failures 0},
+              :summary-report "1 tests, 0 passed, 1 warnings, 0 failures\n",
+              :result {"test-resources/test.yaml" [{:message :conjtest/rule-validation-failed,
+                                                    :name nil,
+                                                    :rule-type :warn,
+                                                    :failure? true}]}}
+             (conjtest/test invalid-yaml
+                            ^{:rule/type :warn}
+                            [:map
+                             [:apiVersion [:= "v1"]]
+                             [:kind [:= "Service"]]
+                             [:spec [:map [:ports [:+ [:map [:port [:not= 80]]]]]]]])
+             (conjtest/test invalid-yaml
+                            {:type :warn
+                             :rule [:map
+                                    [:apiVersion [:= "v1"]]
+                                    [:kind [:= "Service"]]
+                                    [:spec [:map [:ports [:+ [:map [:port [:not= 80]]]]]]]]})))
+      (testing "closed schema"
+        (is (= {:summary {:total 1, :passed 1, :warnings 0, :failures 0},
+                :summary-report "1 tests, 1 passed, 0 warnings, 0 failures\n",
+                :result {"test-resources/test.yaml" [{:message nil, :name nil, :rule-type :warn, :failure? false}]}}
+               (conjtest/test valid-yaml
+                              ^{:rule/type :warn}
+                              [:map {:closed true}
+                               [:apiVersion [:= "v1"]]
+                               [:kind [:= "Service"]]
+                               [:metadata [:map [:name :string]]]
+                               [:spec [:map
+                                       [:type :string]
+                                       [:ports [:+ [:map [:port [:not= 80]]]]]
+                                       [:selector [:map [:app :string]]]]]])))
+        (is (= {:summary {:total 1, :passed 0, :warnings 1, :failures 0},
+                :summary-report "1 tests, 0 passed, 1 warnings, 0 failures\n",
+                :result {"test-resources/test.yaml" [{:message :conjtest/rule-validation-failed,
+                                                      :name nil,
+                                                      :rule-type :warn,
+                                                      :failure? true}]}}
+               (conjtest/test invalid-yaml
+                              ^{:rule/type :warn}
+                              [:map {:closed true}
+                               [:apiVersion [:= "v1"]]
+                               [:kind [:= "Service"]]
+                               [:metadata [:map [:name :string]]]
+                               [:spec [:map
+                                       [:type :string]
+                                       [:ports [:+ [:map [:port [:not= 80]]]]]
+                                       [:selector [:map [:app :string]]]]]])))))
+    (testing ":rule/name or :name is shown in reporting for failing tests"
+      (is (= {:summary {:total 1, :passed 0, :warnings 0, :failures 1},
+              :failure-report "FAIL - test-resources/test.yaml - deny-malli-test - :conjtest/rule-validation-failed
+
+1 tests, 0 passed, 0 warnings, 1 failures
+",
+              :result {"test-resources/test.yaml" [{:message :conjtest/rule-validation-failed,
+                                                    :name "deny-malli-test",
+                                                    :rule-type :deny,
+                                                    :failure? true}]}}
+             (conjtest/test invalid-yaml
+                            ^{:rule/name "deny-malli-test"}
+                            [:map
+                             [:apiVersion [:= "v1"]]
+                             [:kind [:= "Service"]]
+                             [:spec [:map [:ports [:+ [:map [:port [:not= 80]]]]]]]])
+             (conjtest/test invalid-yaml
+                            ^{:rule/name "deny-malli-test"}
+                            {:type :deny
+                             :rule [:map
+                                    [:apiVersion [:= "v1"]]
+                                    [:kind [:= "Service"]]
+                                    [:spec [:map [:ports [:+ [:map [:port [:not= 80]]]]]]]]})
+             (conjtest/test invalid-yaml
+                            {:type :deny
+                             :name "deny-malli-test"
+                             :rule [:map
+                                    [:apiVersion [:= "v1"]]
+                                    [:kind [:= "Service"]]
+                                    [:spec [:map [:ports [:+ [:map [:port [:not= 80]]]]]]]]})
+             (conjtest/test invalid-yaml
+                            ^{:rule/name "deny-malli-test-from-meta"}
+                            {:type :deny
+                             ;; name overrides rule/name
+                             :name "deny-malli-test"
+                             :rule [:map
+                                    [:apiVersion [:= "v1"]]
+                                    [:kind [:= "Service"]]
+                                    [:spec [:map [:ports [:+ [:map [:port [:not= 80]]]]]]]]}))))
+    (testing ":rule/message adds top-level error message that is shown by default"
+      (is (= {:summary {:total 1, :passed 0, :warnings 0, :failures 1},
+              :failure-report "FAIL - test-resources/test.yaml - default error message
+
+1 tests, 0 passed, 0 warnings, 1 failures
+",
+              :result {"test-resources/test.yaml" [{:message "default error message", :name nil, :rule-type :deny, :failure? true}]}}
+             (conjtest/test invalid-yaml
+                            ^{:rule/message "default error message"}
+                            {:type :deny
+                             :rule [:map
+                                    [:apiVersion [:= "v1"]]
+                                    [:kind [:= "Service"]]
+                                    [:spec [:map [:ports [:+ [:map [:port [:not= 80]]]]]]]]})))
+      (testing "map-based :message supercedes :rule/message"
+        (is (= {:summary {:total 1, :passed 0, :warnings 0, :failures 1},
+                :failure-report "FAIL - test-resources/test.yaml - superceded error message
+
+1 tests, 0 passed, 0 warnings, 1 failures
+",
+                :result {"test-resources/test.yaml" [{:message "superceded error message", :name nil, :rule-type :deny, :failure? true}]}}
+               (conjtest/test invalid-yaml
+                              ^{:rule/message "default error message"}
+                              {:type :deny
+                               :message "superceded error message"
+                               :rule [:map
+                                      [:apiVersion [:= "v1"]]
+                                      [:kind [:= "Service"]]
+                                      [:spec [:map [:ports [:+ [:map [:port [:not= 80]]]]]]]]}))))
+      (testing "malli humanized errors supercede both :message and :rule/message"
+        (is (= {:summary {:total 1, :passed 0, :warnings 0, :failures 1},
+                :failure-report "FAIL - test-resources/test.yaml - {:spec {:ports [#ordered/map ([:port [\"should be 80\"]])]}}
+
+1 tests, 0 passed, 0 warnings, 1 failures
+",
+                :result {"test-resources/test.yaml" [{:message "{:spec {:ports [#ordered/map ([:port [\"should be 80\"]])]}}", :name nil, :rule-type :allow, :failure? true}]}}
+               (conjtest/test invalid-yaml
+                              {:type :allow
+                               :message "{:spec {:ports [#ordered/map ([:port [\\\"should be 80\\\"]])]}}"
+                               :rule [:map
+                                      [:apiVersion [:= "v1"]]
+                                      [:kind [:= "Service"]]
+                                      [:spec [:map [:ports [:+ [:map [:port [:= 80]]]]]]]]}))))))
   (testing "multiple map entries"
     (is (= {:summary {:total 4, :passed 2, :warnings 0, :failures 2}
             :result {"test-resources/test.yaml" [{:message nil,
@@ -567,7 +907,8 @@ FAIL - null - allow-will-trigger-always - :conjtest/rule-validation-failed
                   [#'conjtest.example-deny-rules/deny-my-rule
                    #'conjtest.example-deny-rules/differently-named-deny-rule
                    #'conjtest.example-deny-rules/deny-my-bare-rule
-                   #'conjtest.example-deny-rules/deny-my-absolute-bare-rule]
+                   #'conjtest.example-deny-rules/deny-my-absolute-bare-rule
+                   #'conjtest.example-deny-rules/deny-malli-rule]
                   {:trace true})))))
       (testing "when rule is not triggered"
         (is (string?
@@ -577,7 +918,8 @@ FAIL - null - allow-will-trigger-always - :conjtest/rule-validation-failed
                   [#'conjtest.example-deny-rules/deny-my-rule
                    #'conjtest.example-deny-rules/differently-named-deny-rule
                    #'conjtest.example-deny-rules/deny-my-bare-rule
-                   #'conjtest.example-deny-rules/deny-my-absolute-bare-rule]
+                   #'conjtest.example-deny-rules/deny-my-absolute-bare-rule
+                   #'conjtest.example-deny-rules/deny-malli-rule]
                   {:trace true}))))))
     (testing "vector inputs"
       (testing "when rule is trigerred"
